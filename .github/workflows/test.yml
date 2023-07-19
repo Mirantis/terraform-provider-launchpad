@@ -24,7 +24,8 @@ jobs:
       GOPRIVATE: github.com/Mirantis/mcc
     timeout-minutes: 5
     steps:
-      - name: Setup MCC gitub repo private access
+      - 
+        name: Setup MCC gitub repo private access
         run: git config --global url."https://${{ secrets.GH_MCC_USERNAME }}:${{ secrets.GH_MCC_ACCESS_TOKEN }}@github.com/".insteadOf "https://github.com/"
 
       - uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
