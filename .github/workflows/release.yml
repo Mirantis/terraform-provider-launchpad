@@ -20,7 +20,8 @@ jobs:
   goreleaser:
     runs-on: ubuntu-latest
     steps:
-      - name: Setup MCC gitub repo private access
+      - 
+        name: Setup MCC gitub repo private access
         run: git config --global url."https://${{ secrets.GH_MCC_USERNAME }}:${{ secrets.GH_MCC_ACCESS_TOKEN }}@github.com/".insteadOf "https://github.com/"
       -
         name: Checkout
