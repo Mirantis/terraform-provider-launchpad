@@ -290,7 +290,7 @@ func launchpadSchema14() schema.Schema {
 												Default:             stringdefault.StaticString(""),
 											},
 
-											"default_address_pool": schema.ListNestedAttribute{
+											"default_address_pools": schema.ListNestedAttribute{
 												MarkdownDescription: "Reassign docker subnets",
 
 												Optional: true,
@@ -544,16 +544,16 @@ func (ls launchpadSchema14Model) ClusterConfig(diags *diag.Diagnostics) mcc_mke_
 			daemonConfig["debug"] = mcrConfig.Debug.ValueBool()
 			daemonConfig["bip"] = mcrConfig.Bip.ValueString()
 
-			if len(mcrConfig.DefaultAddressPool) > 0 {
+			if len(mcrConfig.DefaultAddressPools) > 0 {
 				daps := []interface{}{}
-				for _, dap := range mcrConfig.DefaultAddressPool {
+				for _, dap := range mcrConfig.DefaultAddressPools {
 					dapm := map[string]interface{}{
 						"base": dap.Base.ValueString(),
 						"size": dap.Size.ValueInt64(),
 					}
 					daps = append(daps, dapm)
 				}
-				daemonConfig["default-address-pool"] = daps
+				daemonConfig["default-address-pools"] = daps
 			}
 
 			mccHost.DaemonConfig = daemonConfig
@@ -642,11 +642,11 @@ type launchpadSchema14ModelSpecHostHooks struct {
 	Apply []launchpadSchema14ModelSpecHostHookAction `tfsdk:"apply"`
 }
 type launchpadSchema14ModelSpecHostMCRconfig struct {
-	Debug              types.Bool                                                  `json:"debug" tfsdk:"debug"`
-	Bip                types.String                                                `json:"bip" tfsdk:"bip"`
-	DefaultAddressPool []launchpadSchema14ModelSpecHostMCRconfigDefaultAddressPool `json:"default-address-pool" tfsdk:"default_address_pool"`
+	Debug               types.Bool                                                   `json:"debug" tfsdk:"debug"`
+	Bip                 types.String                                                 `json:"bip" tfsdk:"bip"`
+	DefaultAddressPools []launchpadSchema14ModelSpecHostMCRconfigDefaultAddressPools `json:"default-address-pools" tfsdk:"default_address_pools"`
 }
-type launchpadSchema14ModelSpecHostMCRconfigDefaultAddressPool struct {
+type launchpadSchema14ModelSpecHostMCRconfigDefaultAddressPools struct {
 	Base types.String `json:"base" tfsdk:"base"`
 	Size types.Int64  `json:"size" tfsdk:"size"`
 }
