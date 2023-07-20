@@ -163,10 +163,10 @@ Optional:
 
 - `bip` (String) Base IP
 - `debug` (Boolean) Log level
-- `default_address_pool` (Attributes List) Reassign docker subnets (see [below for nested schema](#nestedatt--spec--host--mcr_config--default_address_pool))
+- `default_address_pools` (Attributes List) Reassign docker subnets (see [below for nested schema](#nestedatt--spec--host--mcr_config--default_address_pools))
 
-<a id="nestedatt--spec--host--mcr_config--default_address_pool"></a>
-### Nested Schema for `spec.host.mcr_config.default_address_pool`
+<a id="nestedatt--spec--host--mcr_config--default_address_pools"></a>
+### Nested Schema for `spec.host.mcr_config.default_address_pools`
 
 Required:
 
