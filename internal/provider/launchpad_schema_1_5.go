@@ -16,8 +16,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	mcc_common_api "github.com/Mirantis/mcc/pkg/product/common/api"
-	mcc_mke_api "github.com/Mirantis/mcc/pkg/product/mke/api"
+	mcc_common_api "github.com/Mirantis/launchpad/pkg/product/common/api"
+	mcc_mke_api "github.com/Mirantis/launchpad/pkg/product/mke/api"
 	k0s_dig "github.com/k0sproject/dig"
 	k0s_rig "github.com/k0sproject/rig"
 )
@@ -26,7 +26,7 @@ const (
 	HostRoleMSR = "msr"
 )
 
-func launchpadSchema14() schema.Schema {
+func launchpadSchema15() schema.Schema {
 	return schema.Schema{
 		// This description is used by the documentation generator and the language server.
 		MarkdownDescription: "Mirantis installation using launchpad, parametrized",
@@ -436,24 +436,24 @@ func launchpadSchema14() schema.Schema {
 	}
 }
 
-type launchpadSchema14Model struct {
+type launchpadSchema15Model struct {
 	Id          types.String `tfsdk:"id"`
 	SkipCreate  types.Bool   `tfsdk:"skip_create"`
 	SkipDestroy types.Bool   `tfsdk:"skip_destroy"`
 
-	Metadata launchpadSchema14ModelMetadata `tfsdk:"metadata"`
-	Spec     launchpadSchema14ModelSpec     `tfsdk:"spec"`
+	Metadata launchpadSchema15ModelMetadata `tfsdk:"metadata"`
+	Spec     launchpadSchema15ModelSpec     `tfsdk:"spec"`
 }
 
 // ClusterEqual compare with another state, to see it they are different enough to warrant running launchpad.
-func (ls launchpadSchema14Model) ClusterEqual(c launchpadSchema14Model) bool {
+func (ls launchpadSchema15Model) ClusterEqual(c launchpadSchema15Model) bool {
 	return reflect.DeepEqual(ls.Spec, c.Spec)
 }
 
 // ClusterConfig convert this state object into a proper ClusterConfig.
-func (ls launchpadSchema14Model) ClusterConfig(diags *diag.Diagnostics) mcc_mke_api.ClusterConfig {
+func (ls launchpadSchema15Model) ClusterConfig(diags *diag.Diagnostics) mcc_mke_api.ClusterConfig {
 	cc := mcc_mke_api.ClusterConfig{
-		APIVersion: "launchpad.mirantis.com/mke/v1.4",
+		APIVersion: "launchpad.mirantis.com/mke/v1.5",
 		Kind:       "mke",
 
 		Metadata: func() *mcc_mke_api.ClusterMeta {
@@ -646,23 +646,23 @@ func (ls launchpadSchema14Model) ClusterConfig(diags *diag.Diagnostics) mcc_mke_
 	return cc
 }
 
-type launchpadSchema14ModelMetadata struct {
+type launchpadSchema15ModelMetadata struct {
 	Name types.String `tfsdk:"name" json:"name"`
 }
 
-type launchpadSchema14ModelSpec struct {
-	Cluster []launchpadSchema14ModelCluster  `tfsdk:"cluster"`
-	Hosts   []launchpadSchema14ModelSpecHost `tfsdk:"host"`
-	MCR     launchpadSchema14ModelSpecMCR    `tfsdk:"mcr"`
-	MKE     launchpadSchema14ModelSpecMKE    `tfsdk:"mke"`
-	MSR     []launchpadSchema14ModelSpecMSR  `tfsdk:"msr"`
+type launchpadSchema15ModelSpec struct {
+	Cluster []launchpadSchema15ModelCluster  `tfsdk:"cluster"`
+	Hosts   []launchpadSchema15ModelSpecHost `tfsdk:"host"`
+	MCR     launchpadSchema15ModelSpecMCR    `tfsdk:"mcr"`
+	MKE     launchpadSchema15ModelSpecMKE    `tfsdk:"mke"`
+	MSR     []launchpadSchema15ModelSpecMSR  `tfsdk:"msr"`
 }
 
-type launchpadSchema14ModelCluster struct {
+type launchpadSchema15ModelCluster struct {
 	Prune types.Bool `tfsdk:"prune"`
 }
 
-type launchpadSchema14ModelSpecMCR struct {
+type launchpadSchema15ModelSpecMCR struct {
 	Version           types.String `tfsdk:"version"`
 	Channel           types.String `tfsdk:"channel"`
 	InstallURLLinux   types.String `tfsdk:"install_url_linux"`
@@ -670,7 +670,7 @@ type launchpadSchema14ModelSpecMCR struct {
 	RepoURL           types.String `tfsdk:"repo_url"`
 }
 
-type launchpadSchema14ModelSpecMKE struct {
+type launchpadSchema15ModelSpecMKE struct {
 	AdminPassword   types.String                         `tfsdk:"admin_password"`
 	AdminUsername   types.String                         `tfsdk:"admin_username"`
 	ImageRepo       types.String                         `tfsdk:"image_repo"`
@@ -680,16 +680,16 @@ type launchpadSchema14ModelSpecMKE struct {
 	LicenseFilePath types.String                         `tfsdk:"license_file_path"`
 	ConfigFile      types.String                         `tfsdk:"config_file"`
 	ConfigData      types.String                         `tfsdk:"config_data"`
-	Cloud           []launchpadSchema14ModelSpecMKECloud `tfsdk:"cloud"`
+	Cloud           []launchpadSchema15ModelSpecMKECloud `tfsdk:"cloud"`
 }
 
-type launchpadSchema14ModelSpecMKECloud struct {
+type launchpadSchema15ModelSpecMKECloud struct {
 	Provider   types.String `tfsdk:"provider"`
 	ConfigFile types.String `tfsdk:"config_file"`
 	ConfigData types.String `tfsdk:"config_data"`
 }
 
-type launchpadSchema14ModelSpecMSR struct {
+type launchpadSchema15ModelSpecMSR struct {
 	ImageRepo    types.String `tfsdk:"image_repo"`
 	Version      types.String `tfsdk:"version"`
 	ReplicaIDs   types.String `tfsdk:"replica_ids"`
@@ -697,36 +697,36 @@ type launchpadSchema14ModelSpecMSR struct {
 	UpgradeFlags types.List   `tfsdk:"upgrade_flags"`
 }
 
-type launchpadSchema14ModelSpecHost struct {
+type launchpadSchema15ModelSpecHost struct {
 	Role      types.String                              `tfsdk:"role"`
-	Hooks     []launchpadSchema14ModelSpecHostHooks     `tfsdk:"hooks"`
-	SSH       []launchpadSchema14ModelSpecHostSSH       `tfsdk:"ssh"`
-	WinRM     []launchpadSchema14ModelSpecHostWinrm     `tfsdk:"winrm"`
-	MCRConfig []launchpadSchema14ModelSpecHostMCRconfig `tfsdk:"mcr_config"`
+	Hooks     []launchpadSchema15ModelSpecHostHooks     `tfsdk:"hooks"`
+	SSH       []launchpadSchema15ModelSpecHostSSH       `tfsdk:"ssh"`
+	WinRM     []launchpadSchema15ModelSpecHostWinrm     `tfsdk:"winrm"`
+	MCRConfig []launchpadSchema15ModelSpecHostMCRconfig `tfsdk:"mcr_config"`
 }
-type launchpadSchema14ModelSpecHostHooks struct {
-	Apply []launchpadSchema14ModelSpecHostHookAction `tfsdk:"apply"`
+type launchpadSchema15ModelSpecHostHooks struct {
+	Apply []launchpadSchema15ModelSpecHostHookAction `tfsdk:"apply"`
 }
-type launchpadSchema14ModelSpecHostMCRconfig struct {
+type launchpadSchema15ModelSpecHostMCRconfig struct {
 	Debug               types.Bool                                                   `json:"debug" tfsdk:"debug"`
 	Bip                 types.String                                                 `json:"bip" tfsdk:"bip"`
-	DefaultAddressPools []launchpadSchema14ModelSpecHostMCRconfigDefaultAddressPools `json:"default-address-pools" tfsdk:"default_address_pools"`
+	DefaultAddressPools []launchpadSchema15ModelSpecHostMCRconfigDefaultAddressPools `json:"default-address-pools" tfsdk:"default_address_pools"`
 }
-type launchpadSchema14ModelSpecHostMCRconfigDefaultAddressPools struct {
+type launchpadSchema15ModelSpecHostMCRconfigDefaultAddressPools struct {
 	Base types.String `json:"base" tfsdk:"base"`
 	Size types.Int64  `json:"size" tfsdk:"size"`
 }
-type launchpadSchema14ModelSpecHostHookAction struct {
+type launchpadSchema15ModelSpecHostHookAction struct {
 	Before types.List `tfsdk:"before"`
 	After  types.List `tfsdk:"after"`
 }
-type launchpadSchema14ModelSpecHostSSH struct {
+type launchpadSchema15ModelSpecHostSSH struct {
 	Address types.String `tfsdk:"address"`
 	KeyPath types.String `tfsdk:"key_path"`
 	User    types.String `tfsdk:"user"`
 	Port    types.Int64  `tfsdk:"port"`
 }
-type launchpadSchema14ModelSpecHostWinrm struct {
+type launchpadSchema15ModelSpecHostWinrm struct {
 	Address  types.String `tfsdk:"address"`
 	User     types.String `tfsdk:"user"`
 	Password types.String `tfsdk:"password"`

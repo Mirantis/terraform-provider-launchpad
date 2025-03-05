@@ -21,3 +21,6 @@ lint:
 .PHONY: local
 local:
 	GORELEASER_CURRENT_TAG="$(LOCAL_TAG)" goreleaser build --clean --single-target --skip=validate
+
+# currently we don't generate any infra, but we likely should generate the schema using automation
+.PHONY: generate

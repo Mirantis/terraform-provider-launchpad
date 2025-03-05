@@ -9,7 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"gopkg.in/yaml.v2"
 
-	mcc_mke "github.com/Mirantis/mcc/pkg/product/mke"
+	mcc_mke "github.com/Mirantis/launchpad/pkg/product/mke"
 )
 
 var _ resource.Resource = &LaunchpadConfigResource{}
@@ -27,7 +27,7 @@ func (r *LaunchpadConfigResource) Metadata(ctx context.Context, req resource.Met
 }
 
 func (r *LaunchpadConfigResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
-	resp.Schema = launchpadSchema14()
+	resp.Schema = launchpadSchema15()
 }
 
 func (r *LaunchpadConfigResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
@@ -142,8 +142,8 @@ func (r *LaunchpadConfigResource) ImportState(ctx context.Context, req resource.
 
 // Get the schema model (for state) and create an MKE Product object from a getter such as a req.State.Get or req.Plan.Get or req.Config.Get
 // this is a helper for frequently repeated code where we want to interpret schema into a model to add to state, and an MKE Product to take action against.
-func getterToModelAndProduct(ctx context.Context, diags *diag.Diagnostics, getter func(context.Context, interface{}) diag.Diagnostics, skipValidation bool) (launchpadSchema14Model, mcc_mke.MKE) {
-	var ls launchpadSchema14Model
+func getterToModelAndProduct(ctx context.Context, diags *diag.Diagnostics, getter func(context.Context, interface{}) diag.Diagnostics, skipValidation bool) (launchpadSchema15Model, mcc_mke.MKE) {
+	var ls launchpadSchema15Model
 	var mke mcc_mke.MKE
 
 	// Read Terraform plan data into the model
@@ -167,7 +167,7 @@ func getterToModelAndProduct(ctx context.Context, diags *diag.Diagnostics, gette
 	mke = mcc_mke.MKE{ClusterConfig: cc}
 
 	if !skipValidation {
-		tflog.Debug(ctx, "running validation of created mcc.mke.clusterconfig", map[string]interface{}{})
+		tflog.Debug(ctx, "running validation of created launchpad.mke.clusterconfig", map[string]interface{}{})
 
 		if err := mke.ClusterConfig.Validate(); err != nil {
 			diags.AddError(
