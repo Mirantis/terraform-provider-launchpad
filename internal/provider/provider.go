@@ -29,12 +29,12 @@ type LaunchpadProviderModel struct {
 	testingMode bool
 }
 
-func (p *LaunchpadProvider) Metadata(ctx context.Context, req provider.MetadataRequest, resp *provider.MetadataResponse) {
+func (p *LaunchpadProvider) Metadata(_ context.Context, _ provider.MetadataRequest, resp *provider.MetadataResponse) {
 	resp.TypeName = "launchpad"
 	resp.Version = p.version
 }
 
-func (p *LaunchpadProvider) Schema(ctx context.Context, req provider.SchemaRequest, resp *provider.SchemaResponse) {
+func (p *LaunchpadProvider) Schema(_ context.Context, _ provider.SchemaRequest, resp *provider.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{},
 	}
@@ -59,13 +59,13 @@ func (p *LaunchpadProvider) Configure(ctx context.Context, req provider.Configur
 	AllLoggingToTFLog()
 }
 
-func (p *LaunchpadProvider) Resources(ctx context.Context) []func() resource.Resource {
+func (p *LaunchpadProvider) Resources(_ context.Context) []func() resource.Resource {
 	return []func() resource.Resource{
 		NewLaunchpadConfigResource,
 	}
 }
 
-func (p *LaunchpadProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
+func (p *LaunchpadProvider) DataSources(_ context.Context) []func() datasource.DataSource {
 	return []func() datasource.DataSource{}
 }
 

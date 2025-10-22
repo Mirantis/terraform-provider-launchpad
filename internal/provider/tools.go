@@ -16,7 +16,6 @@ func AllLoggingToTFLog() {
 	logrus.SetLevel(logrus.TraceLevel) // trace all log levels, as we don't know what to catch yet.
 
 	rig.SetLogger(rigTFLogLogger{})
-
 }
 
 // logRusTFLogHandler a tflog handler which integrates logrus so that logrus output gets handled natively.
@@ -58,21 +57,24 @@ func logrusTFLogFire(ctx context.Context, e *logrus.Entry) {
 
 // rigTFLogLogger Logger that converts k0sProject logging to tflog.
 // @NOTE we re-use the logrus levels for convenience - but this has nothing to do with logrus.
-type rigTFLogLogger struct {
-}
+type rigTFLogLogger struct{}
 
 func (l rigTFLogLogger) Tracef(msg string, values ...interface{}) {
 	rigLoggerTFLogFire(logrus.TraceLevel, msg, values...)
 }
+
 func (l rigTFLogLogger) Debugf(msg string, values ...interface{}) {
 	rigLoggerTFLogFire(logrus.DebugLevel, msg, values...)
 }
+
 func (l rigTFLogLogger) Infof(msg string, values ...interface{}) {
 	rigLoggerTFLogFire(logrus.InfoLevel, msg, values...)
 }
+
 func (l rigTFLogLogger) Warnf(msg string, values ...interface{}) {
 	rigLoggerTFLogFire(logrus.WarnLevel, msg, values...)
 }
+
 func (l rigTFLogLogger) Errorf(msg string, values ...interface{}) {
 	rigLoggerTFLogFire(logrus.ErrorLevel, msg, values...)
 }
@@ -97,6 +99,5 @@ func rigLoggerTFLogFire(level logrus.Level, entry string, values ...interface{})
 		case logrus.WarnLevel:
 			tflog.Warn(ctx, msg, addFields)
 		}
-
 	}(fmt.Sprintf(entry, values...))
 }
