@@ -469,6 +469,7 @@ func (ls launchpadSchema15Model) ClusterConfig(ctx context.Context, diags *diag.
 				InstallURLWindows: ls.Spec.MCR.InstallURLWindows.ValueString(),
 				RepoURL:           ls.Spec.MCR.RepoURL.ValueString(),
 				Channel:           ls.Spec.MCR.Channel.ValueString(),
+				Metadata:          &mcc_common_api.MCRMetadata{},
 			},
 
 			MKE: mcc_mke_api.MKEConfig{
