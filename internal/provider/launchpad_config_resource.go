@@ -4,12 +4,11 @@ import (
 	"context"
 	"fmt"
 
+	mcc_mke "github.com/Mirantis/launchpad/pkg/product/mke"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"gopkg.in/yaml.v2"
-
-	mcc_mke "github.com/Mirantis/mcc/pkg/product/mke"
 )
 
 var _ resource.Resource = &LaunchpadConfigResource{}
@@ -18,19 +17,19 @@ type LaunchpadConfigResource struct {
 	testingMode bool
 }
 
-func NewLaunchpadConfigResource() resource.Resource {
+func NewLaunchpadConfigResource() resource.Resource { //nolint:ireturn
 	return &LaunchpadConfigResource{}
 }
 
-func (r *LaunchpadConfigResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+func (r *LaunchpadConfigResource) Metadata(_ context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
 	resp.TypeName = req.ProviderTypeName + "_config"
 }
 
-func (r *LaunchpadConfigResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
-	resp.Schema = launchpadSchema14()
+func (r *LaunchpadConfigResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
+	resp.Schema = launchpadSchema15()
 }
 
-func (r *LaunchpadConfigResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+func (r *LaunchpadConfigResource) Configure(_ context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	// Prevent panic if the provider has not been configured.
 	if req.ProviderData == nil {
 		return
@@ -61,7 +60,6 @@ func (r *LaunchpadConfigResource) Create(ctx context.Context, req resource.Creat
 		resp.Diagnostics.AddWarning("skipping create", "Skipping the launchpad create because of configuration flag.")
 	} else if r.testingMode {
 		resp.Diagnostics.AddWarning("testing mode warning", "launchpad config resource handler is in testing mode, no installation will be run.")
-
 	} else if err := mke.Apply(false, false, 10, false); err != nil {
 		ccout, _ := yaml.Marshal(mke.ClusterConfig)
 		resp.Diagnostics.AddError(
@@ -72,14 +70,14 @@ func (r *LaunchpadConfigResource) Create(ctx context.Context, req resource.Creat
 		return
 	}
 
-	model.Id = model.Metadata.Name
+	model.ID = model.Metadata.Name
 
 	if diags := resp.State.Set(ctx, model); diags != nil {
 		resp.Diagnostics.Append(diags...)
 	}
 }
 
-func (r *LaunchpadConfigResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+func (r *LaunchpadConfigResource) Read(_ context.Context, _ resource.ReadRequest, _ *resource.ReadResponse) {
 	// launchpad has no good way to discover existing installation, so we don't do anything
 }
 
@@ -94,7 +92,6 @@ func (r *LaunchpadConfigResource) Update(ctx context.Context, req resource.Updat
 		resp.Diagnostics.AddWarning("skipping destroy", "Skipping the launchpad destroy because of configuration flag.")
 	} else if r.testingMode {
 		resp.Diagnostics.AddWarning("testing mode warning", "launchpad config resource handler is in testing mode, no update will be run.")
-
 	} else if err := mke.Apply(false, false, 10, false); err != nil {
 		ccout, _ := yaml.Marshal(mke.ClusterConfig)
 		resp.Diagnostics.AddError(
@@ -121,7 +118,6 @@ func (r *LaunchpadConfigResource) Delete(ctx context.Context, req resource.Delet
 		resp.Diagnostics.AddWarning("skipping destroy", "Skipping the launchpad destroy because of configuration flag.")
 	} else if r.testingMode {
 		resp.Diagnostics.AddWarning("testing mode warning", "launchpad config resource handler is in testing mode, no reset will be run.")
-
 	} else if err := mke.Reset(); err != nil {
 		resp.Diagnostics.AddError(
 			"Launchpad Reset failed",
@@ -135,15 +131,15 @@ func (r *LaunchpadConfigResource) Delete(ctx context.Context, req resource.Delet
 	resp.State.RemoveResource(ctx)
 }
 
-func (r *LaunchpadConfigResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+func (r *LaunchpadConfigResource) ImportState(_ context.Context, _ resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	// an import is an invalid operation for launchpad, as it will want to run anyway. Just add the resource and apply it.
 	resp.Diagnostics.AddError("Launchpad imports are invalid", "The launchpad resource does not support imports, as launchpad itself doesn't maintain state. Just add the resource and hit apply.a")
 }
 
 // Get the schema model (for state) and create an MKE Product object from a getter such as a req.State.Get or req.Plan.Get or req.Config.Get
 // this is a helper for frequently repeated code where we want to interpret schema into a model to add to state, and an MKE Product to take action against.
-func getterToModelAndProduct(ctx context.Context, diags *diag.Diagnostics, getter func(context.Context, interface{}) diag.Diagnostics, skipValidation bool) (launchpadSchema14Model, mcc_mke.MKE) {
-	var ls launchpadSchema14Model
+func getterToModelAndProduct(ctx context.Context, diags *diag.Diagnostics, getter func(context.Context, interface{}) diag.Diagnostics, skipValidation bool) (launchpadSchema15Model, mcc_mke.MKE) {
+	var ls launchpadSchema15Model
 	var mke mcc_mke.MKE
 
 	// Read Terraform plan data into the model
@@ -154,20 +150,20 @@ func getterToModelAndProduct(ctx context.Context, diags *diag.Diagnostics, gette
 		return ls, mke
 	}
 
-	cc := ls.ClusterConfig(diags)
+	cc := ls.ClusterConfig(ctx, diags)
 
 	// Capture the resulting cluster config as yaml to help debugging
 	if b, err := yaml.Marshal(cc); err == nil {
-		tflog.Info(ctx, "ClusterConfig created", map[string]interface{}{"cc": string(b)})
+		tflog.Info(ctx, "ClusterConfig created", map[string]any{"cc": string(b)})
 	} else {
 		// this is weird
-		tflog.Warn(ctx, "ClusterConfig yaml Marshal failed", map[string]interface{}{"err": err})
+		tflog.Warn(ctx, "ClusterConfig yaml Marshal failed", map[string]any{"err": err})
 	}
 
 	mke = mcc_mke.MKE{ClusterConfig: cc}
 
 	if !skipValidation {
-		tflog.Debug(ctx, "running validation of created mcc.mke.clusterconfig", map[string]interface{}{})
+		tflog.Debug(ctx, "running validation of created mcc.mke.clusterconfig", map[string]any{})
 
 		if err := mke.ClusterConfig.Validate(); err != nil {
 			diags.AddError(

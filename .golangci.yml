@@ -1,27 +1,91 @@
 # Visit https://golangci-lint.run/ for usage documentation
 # and information on other useful linters
-issues:
-  max-per-linter: 0
-  max-same-issues: 0
-
+version: "2"
+run:
+  tests: false
+  allow-parallel-runners: true
 linters:
-  disable-all: true
   enable:
+    - asciicheck
+    - bidichk
+    - bodyclose
+    - containedctx
+    - contextcheck
+    - dupword
     - durationcheck
-    - errcheck
-    - exportloopref
+    - err113
+    - errchkjson
+    - errname
+    - errorlint
     - forcetypeassert
+    - gocritic
     - godot
-    - gofmt
-    - gosimple
-    - ineffassign
-    - makezero
+    - goprintffuncname
+    - gosec
+    - importas
+    - ireturn
+    - maintidx
+    - mirror
     - misspell
-    - nilerr
+    - nakedret
+    - nilnil
+    - nolintlint
+    - nosprintfhostport
+    - prealloc
     - predeclared
+    - reassign
+    - revive
     - staticcheck
-    - tenv
     - unconvert
     - unparam
-    - unused
-    - vet
+    - usestdlibvars
+    - usetesting
+    - wastedassign
+    - whitespace
+    - wrapcheck
+  settings:
+    varnamelen:
+      max-distance: 10
+      ignore-decls:
+        - w http.ResponseWriter
+        - r *http.Request
+        - i int
+        - n int
+        - p []byte
+        - mu sync.Mutex
+        - wg sync.WaitGroup
+        - h Host
+        - h os.Host
+        - h *api.Host
+        - ok bool
+        - s string
+  exclusions:
+    generated: lax
+    presets:
+      - comments
+      - common-false-positives
+      - legacy
+      - std-error-handling
+    paths:
+      - .*\.gen\.go
+      - examples/*
+      - test/*
+      - logo.go
+      - logo_windows.go
+issues:
+  max-issues-per-linter: 0
+  max-same-issues: 0
+formatters:
+  enable:
+    - gci
+    - gofmt
+    - gofumpt
+    - goimports
+  exclusions:
+    generated: lax
+    paths:
+      - .*\.gen\.go
+      - examples/*
+      - test/*
+      - logo.go
+      - logo_windows.go 
